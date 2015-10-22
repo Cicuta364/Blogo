@@ -1,28 +1,84 @@
 <p>
   <strong>Title:</strong>
   <%= @post.title %>
+  by <%= @post.user %>
 </p>
 
-<p>
-  <strong>Content:</strong>
-  <%= @post.content %>
-</p>
+	<p>
+	  <strong>Content:</strong>
+	  <%= @post.content %>
+	</p>
 
-<%= link_to 'Edit', edit_post_path(@post) %> |
-<%= link_to 'Back', posts_path %>
-<br>
-<!-- // hacer form_for -->
-<%= form_for [@post, Comment.new] do |f| %>
-	<p><%= f.label :content, "Escribe tu comentario:"  %></p>
-	<%= f.text_area :content  %>
-	<%= f.submit "Enviar"   %>
+	<%= link_to 'Edit', edit_post_path(@post) %> |
+	<%= link_to 'Back', posts_path %>
+	<br>
+
+<p> Likes: <strong><%= @post.likes.count %></strong> </p>
+
+	<% if can? :like, Post %>
+		<p>
+			<% unless @post.liked_by? current_user %>
+				<%= link_to 'Me Gusta', like_post_path(@post) %>
+			<% else %>
+				<%= link_to 'Ya No Me Gusta', like_post_path(@post) %>
+			<% end %>
+		</p>
+	<% end %>
+
+<h2>Interes</h2>
+	<% if can? :set_tag, @post %>
+	<%= form_tag set_tag_post_path(@post) do %>
+		<table>
+			<thead>
+				<tr>
+					<th>Seleciona</th>
+				</tr>
+			</thead>
+			<tbody>
+				<% @tags.each do |tag| %>
+					<% if @post_tags.include? tag %>
+						<tr>
+							<td><%= tag.name %></td>
+							<td><%= check_box_tag 'tags_ids[]', tag.id, 'Yes' %></td>
+						</tr>
+					<% else %>
+						<tr>
+							<td><%= tag.name %></td>
+							<td><%= check_box_tag 'tags_ids[]', tag.id %></td>
+						</tr>
+					<% end %>
+				<% end %>
+			</tbody>
+		</table>
+	<%= submit_tag 'Guardar' %>
+	<% end %>
 <% end %>
+
+<!-- // hacer form_for -->
+	<%= form_for [@post, Comment.new] do |f| %>
+		<p><%= f.label :content, "Escribe tu comentario:"  %></p>
+		<%= f.text_area :content  %>
+		<%= f.submit "Enviar"   %>
+	<% end %>
 
 <h2>Comentarios:</h2>
 
-<% @comments.each do |c| %>
-	<hr>
-	<p><small><%= time_ago_in_words c.created_at %></small></p>
-	<p><%= c.content  %></p>
-	<hr>
-<% end %>
+	<% @comments.each do |c| %>
+		<hr>
+			<p><small><%= time_ago_in_words c.created_at %></small></p>
+			<p><%= c.content  %></p>
+			<small>by: <%= c.user %></small>
+
+			<p> Likes: <strong><%= c.likes.count %></strong> </p>
+
+			<% if can? :like, Comment %>
+				<p>
+					<% unless c.liked_by? current_user %>
+						<%= link_to 'Me Gusta', like_post_comment_path(@post, c) %>
+					<% else %>
+						<%= link_to 'Ya No Me Gusta', like_post_comment_path(@post, c) %>
+					<% end %>
+				</p>
+			<% end %>
+		<hr>
+	<% end %>
