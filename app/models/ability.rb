@@ -11,16 +11,16 @@ class Ability
         elsif user.editor?
             can :read, :all
             can :create, :all
-            can :edit, [:post, :comment]
-            can :destroy, [:post, :comment], user_id: user.id
+            can :edit, [Post, Comment]
+            can :destroy, [Post, Comment], user_id: user.id
             can [:set_tag, :set_tags], Post
-            can :like, [:post, :comment]
+            can :like, [Post, Comment]
         elsif user.user?
             can :read, :all
-            can :create, [:post, :comment]
-            can [:edit, :destroy], [:post, :comment], user_id: user.id
+            can :create, [Post, Comment]
+            can [:edit, :destroy], [Post, Comment], user_id: user.id
             can :set_tag, Post, user_id: user.id
-            can :like, [:post, :comment]
+            can :like, [Post, Comment]
        else
          can :read, :all
        end
