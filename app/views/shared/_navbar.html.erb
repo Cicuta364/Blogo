@@ -5,7 +5,8 @@
 	<% else %>
 		<%= link_to current_user.email, edit_user_registration_path %>
 		<small> <%= current_user.role %></small>
-		<%= link_to 'Salir', destroy_user_session_path, method: :delete, data: {confirm: "Seguro quer desea salir de su secion?"} %>
+		<%= link_to 'Salir', destroy_user_session_path, method: :delete  %>
 	<% end %>
 
 </p>
+
